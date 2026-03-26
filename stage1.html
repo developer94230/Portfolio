@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stage BTS SIO — Adam Nassiri</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css">
+
+<style>
+:root {
+  --bg:       #050d1a;
+  --bg2:      #071325;
+  --cyan:     #00f0ff;
+  --cyan2:    #4facfe;
+  --gold:     #f7c948;
+  --red:      #ff4d6d;
+  --card:     rgba(255,255,255,0.04);
+  --border:   rgba(0,240,255,0.12);
+  --text:     #c8ddf5;
+  --white:    #eaf4ff;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+/* ── NOISE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0;
+}
+
+/* ── HERO BACKGROUND ── */
+.hero-bg {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(0,240,255,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 80%, rgba(79,172,254,0.06) 0%, transparent 60%),
+    var(--bg);
+  z-index: -1;
+}
+
+/* ── BACK BTN ── */
+.back-btn {
+  position: fixed; top: 24px; left: 24px; z-index: 100;
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(0,240,255,0.1);
+  border: 1px solid rgba(0,240,255,0.3);
+  color: var(--cyan);
+  padding: 10px 20px; border-radius: 50px;
+  text-decoration: none; font-family: 'Syne', sans-serif;
+  font-weight: 600; font-size: 0.85rem; letter-spacing: 0.05em;
+  backdrop-filter: blur(12px);
+  transition: all 0.3s ease;
+}
+.back-btn:hover {
+  background: rgba(0,240,255,0.2);
+  box-shadow: 0 0 20px rgba(0,240,255,0.25);
+  transform: translateX(-3px);
+}
+
+/* ── PROGRESS BAR ── */
+#progress {
+  position: fixed; top: 0; left: 0; height: 3px;
+  background: linear-gradient(90deg, var(--cyan), var(--cyan2));
+  z-index: 200; transition: width 0.1s linear;
+  box-shadow: 0 0 12px rgba(0,240,255,0.6);
+}
+
+/* ── CONTAINER ── */
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 100px 24px 80px;
+  position: relative; z-index: 1;
+}
+
+/* ── HERO HEADER ── */
+.hero {
+  padding: 60px 0 40px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 60px;
+}
+
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(0,240,255,0.08);
+  border: 1px solid rgba(0,240,255,0.2);
+  color: var(--cyan); padding: 5px 14px; border-radius: 50px;
+  font-size: 0.75rem; font-family: 'Syne', sans-serif;
+  font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.hero-tag::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.8); }
+}
+
+.hero h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--white);
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.hero h1 span {
+  background: linear-gradient(135deg, var(--cyan), var(--cyan2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-meta {
+  display: flex; flex-wrap: wrap; gap: 20px;
+  margin: 24px 0 32px;
+  font-size: 0.9rem; color: rgba(200,221,245,0.6);
+}
+
+.hero-meta span {
+  display: flex; align-items: center; gap: 6px;
+}
+
+.hero-meta .dot {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--cyan); opacity: 0.6;
+}
+
+/* ── BADGES ── */
+.badges {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin-top: 4px;
+}
+
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 13px; border-radius: 50px;
+  font-size: 0.78rem; font-family: 'Syne', sans-serif;
+  font-weight: 700; letter-spacing: 0.04em;
+}
+
+.badge-tech {
+  background: rgba(0,240,255,0.08);
+  border: 1px solid rgba(0,240,255,0.2);
+  color: var(--cyan);
+}
+
+.badge-tool {
+  background: rgba(247,201,72,0.08);
+  border: 1px solid rgba(247,201,72,0.25);
+  color: var(--gold);
+}
+
+/* ── SECTION ── */
+.section { margin-bottom: 56px; }
+
+.section-header {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 24px;
+}
+
+.section-icon {
+  width: 42px; height: 42px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+  background: rgba(0,240,255,0.08);
+  border: 1px solid rgba(0,240,255,0.15);
+  flex-shrink: 0;
+}
+
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.2rem; font-weight: 700;
+  color: var(--white); letter-spacing: -0.01em;
+}
+
+.section-line {
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, rgba(0,240,255,0.2), transparent);
+}
+
+/* ── CARD ── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 32px;
+  backdrop-filter: blur(8px);
+}
+
+/* ── INFO GRID ── */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.info-item {
+  background: rgba(0,240,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+
+.info-label {
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--cyan); opacity: 0.7;
+  margin-bottom: 4px;
+  font-family: 'Syne', sans-serif;
+}
+
+.info-value {
+  font-size: 0.95rem; color: var(--white); font-weight: 500;
+}
+
+/* ── OBJECTIVES LIST ── */
+.obj-list {
+  display: flex; flex-direction: column; gap: 12px;
+  margin-top: 4px;
+}
+
+.obj-item {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 16px 20px;
+  background: rgba(0,240,255,0.03);
+  border: 1px solid rgba(0,240,255,0.08);
+  border-radius: 12px;
+  transition: border-color 0.3s, background 0.3s;
+}
+
+.obj-item:hover {
+  border-color: rgba(0,240,255,0.2);
+  background: rgba(0,240,255,0.06);
+}
+
+.obj-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.7rem; font-weight: 800;
+  color: var(--cyan); opacity: 0.5;
+  margin-top: 2px; flex-shrink: 0;
+  letter-spacing: 0.05em;
+}
+
+.obj-text { font-size: 0.93rem; color: var(--text); }
+
+/* ── TECH GRID ── */
+.tech-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.tech-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: default;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.tech-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(0,240,255,0.3);
+  box-shadow: 0 8px 30px rgba(0,240,255,0.1);
+}
+
+.tech-icon { font-size: 1.8rem; margin-bottom: 10px; display: block; }
+
+.tech-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.85rem; font-weight: 700;
+  color: var(--white); margin-bottom: 4px;
+}
+
+.tech-role { font-size: 0.75rem; color: rgba(200,221,245,0.5); }
+
+/* ── MISSIONS ── */
+.missions-list {
+  display: flex; flex-direction: column; gap: 10px;
+}
+
+.mission-item {
+  display: flex; align-items: center; gap: 16px;
+  padding: 14px 20px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  transition: all 0.25s;
+}
+
+.mission-item:hover {
+  border-color: rgba(79,172,254,0.25);
+  background: rgba(79,172,254,0.05);
+}
+
+.mission-arrow {
+  color: var(--cyan2); font-size: 0.8rem; flex-shrink: 0;
+}
+
+.mission-text { font-size: 0.93rem; }
+
+/* ── PROBLEM / SOLUTION ── */
+.ps-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+  margin-top: 4px;
+}
+
+@media (max-width: 640px) { .ps-grid { grid-template-columns: 1fr; } }
+
+.ps-box {
+  padding: 24px; border-radius: 14px;
+}
+
+.ps-box.problem {
+  background: rgba(255,77,109,0.06);
+  border: 1px solid rgba(255,77,109,0.2);
+}
+
+.ps-box.solution {
+  background: rgba(0,240,255,0.05);
+  border: 1px solid rgba(0,240,255,0.18);
+}
+
+.ps-label {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.7rem; font-weight: 800; letter-spacing: 0.1em;
+  text-transform: uppercase; margin-bottom: 10px;
+  display: flex; align-items: center; gap: 6px;
+}
+
+.ps-box.problem .ps-label { color: var(--red); }
+.ps-box.solution .ps-label { color: var(--cyan); }
+
+.ps-box p { font-size: 0.9rem; line-height: 1.6; }
+
+/* ── SKILLS ── */
+.skills-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.skill-item {
+  padding: 18px 20px;
+  background: linear-gradient(135deg, rgba(0,240,255,0.05), rgba(79,172,254,0.04));
+  border: 1px solid rgba(0,240,255,0.12);
+  border-radius: 12px;
+  display: flex; align-items: center; gap: 12px;
+  transition: all 0.3s;
+}
+
+.skill-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 24px rgba(0,240,255,0.12);
+  border-color: rgba(0,240,255,0.25);
+}
+
+.skill-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 8px rgba(0,240,255,0.6);
+  flex-shrink: 0;
+}
+
+.skill-text { font-size: 0.9rem; color: var(--white); font-weight: 500; }
+
+/* ── CAROUSEL ── */
+.carousel-wrap {
+  position: relative; border-radius: 16px; overflow: hidden;
+  box-shadow: 0 0 50px rgba(0,240,255,0.12);
+  border: 1px solid var(--border);
+}
+
+.slides { position: relative; width: 100%; aspect-ratio: 16/9; }
+
+.slide {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.5s ease;
+  font-size: 0.85rem; color: rgba(200,221,245,0.4);
+  text-align: center; padding: 20px;
+}
+
+.slide img {
+  width: 100%; height: 100%; object-fit: contain;
+  position: absolute; inset: 0;
+}
+
+.slide.active { opacity: 1; }
+
+.slide-caption {
+  position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+  background: rgba(5,13,26,0.8); backdrop-filter: blur(8px);
+  border: 1px solid rgba(0,240,255,0.15);
+  padding: 6px 16px; border-radius: 50px;
+  font-size: 0.78rem; color: var(--cyan);
+  font-family: 'Syne', sans-serif; font-weight: 600;
+  white-space: nowrap;
+}
+
+.c-btn {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 40px; height: 40px; border-radius: 50%;
+  background: rgba(5,13,26,0.7); backdrop-filter: blur(8px);
+  border: 1px solid rgba(0,240,255,0.2);
+  color: var(--cyan); font-size: 1rem;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; z-index: 10; transition: all 0.2s;
+}
+
+.c-btn:hover {
+  background: rgba(0,240,255,0.15);
+  box-shadow: 0 0 16px rgba(0,240,255,0.3);
+}
+
+.c-prev { left: 14px; }
+.c-next { right: 14px; }
+
+.c-dots {
+  display: flex; justify-content: center; gap: 8px;
+  padding: 16px 0 4px;
+}
+
+.c-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(0,240,255,0.2);
+  cursor: pointer; transition: all 0.3s;
+}
+
+.c-dot.active {
+  background: var(--cyan);
+  box-shadow: 0 0 8px rgba(0,240,255,0.5);
+  width: 20px; border-radius: 3px;
+}
+
+/* ── TIMELINE ── */
+.timeline {
+  position: relative; padding-left: 24px;
+}
+
+.timeline::before {
+  content: ''; position: absolute; left: 0; top: 8px; bottom: 8px;
+  width: 2px;
+  background: linear-gradient(180deg, var(--cyan), transparent);
+}
+
+.tl-item {
+  position: relative; padding: 0 0 28px 24px;
+}
+
+.tl-item:last-child { padding-bottom: 0; }
+
+.tl-dot {
+  position: absolute; left: -5px; top: 6px;
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--bg); border: 2px solid var(--cyan);
+  box-shadow: 0 0 8px rgba(0,240,255,0.5);
+}
+
+.tl-date {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em;
+  color: var(--cyan); opacity: 0.7; margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.tl-content { font-size: 0.9rem; color: var(--text); }
+
+/* ── QUOTE ── */
+.quote {
+  border-left: 3px solid var(--cyan);
+  padding: 20px 24px;
+  background: rgba(0,240,255,0.04);
+  border-radius: 0 12px 12px 0;
+  font-size: 1rem;
+  color: rgba(200,221,245,0.8);
+  font-style: italic;
+  margin-top: 4px;
+}
+
+/* ── REVEAL ── */
+.reveal {
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal.visible {
+  opacity: 1; transform: translateY(0);
+}
+
+.tech-icon {
+  font-size: 2.2rem;
+  margin-bottom: 10px;
+  display: block;        /* ← forcer le bloc */
+  text-align: center;   
+}
+
+.lb-btn {
+  background: rgba(0,240,255,0.08);
+  border: 1px solid rgba(0,240,255,0.25);
+  color: var(--cyan);
+  padding: 8px 20px;
+  border-radius: 50px;
+  cursor: pointer;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  transition: background 0.2s;
+}
+.lb-btn:hover { background: rgba(0,240,255,0.18); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .hero h1 { font-size: 2rem; }
+  .container { padding: 80px 16px 60px; }
+  .tech-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+
+<body>
+<div class="hero-bg"></div>
+<div id="progress"></div>
+
+<a href="index.html" class="back-btn">← Retour</a>
+
+<div class="container">
+
+  <!-- ══ HERO ══ -->
+  <header class="hero reveal">
+    <div class="hero-tag">BTS SIO SLAM · 1ère année</div>
+
+    <h1>Stage chez<br><span>K'scroute</span></h1>
+
+    <div class="hero-meta">
+      <span>📍 Cachan, Île-de-France</span>
+      <span class="dot"></span>
+      <span>📅 19 Mai – 27 Juin 2025</span>
+      <span class="dot"></span>
+      <span>⏳ 6 semaines · Distanciel</span>
+    </div>
+
+    <div class="badges">
+      <span class="badge badge-tech">HTML</span>
+      <span class="badge badge-tech">CSS</span>
+      <span class="badge badge-tech">Bootstrap</span>
+      <span class="badge badge-tool">GitHub Pages</span>
+      <span class="badge badge-tool">ChatGPT</span>
+      <span class="badge badge-tool">Formsubmit</span>
+    </div>
+  </header>
+
+  <!-- ══ CAROUSEL ══ -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon">🖼️</div>
+      <div class="section-title">Aperçu du site réalisé</div>
+      <div class="section-line"></div>
+    </div>
+<div class="carousel-wrap" id="mainSlide" style="cursor:zoom-in;">
+  <div class="slides">
+    <div class="slide active">
+      <img src="page d'acceuil 1 (kc).png" alt="Page d'accueil">
+      <div class="slide-caption">Page d'accueil</div>
+    </div>
+    <div class="slide">
+      <img src="page d'acceuil 2 (kc).png" alt="Page d'accueil 2">
+      <div class="slide-caption">Page d'accueil 2</div>
+    </div>
+    <div class="slide">
+      <img src="page produits 1 (kc).png" alt="Page produits">
+      <div class="slide-caption">Page produits</div>
+    </div>
+    <div class="slide">
+      <img src="page produits 2 (kc).png" alt="Page produits 2">
+      <div class="slide-caption">Page produits 2</div>
+    </div>
+    <div class="slide">
+      <img src="page produits 3 (kc).png" alt="Page produits 3">
+      <div class="slide-caption">Page produits 3</div>
+    </div>
+    <div class="slide">
+      <img src="page produits 4 (kc).png" alt="Page produits 4">
+      <div class="slide-caption">Page produits 4</div>
+    </div>
+    <div class="slide">
+      <img src="page contact (kc).png" alt="Page contact">
+      <div class="slide-caption">Page contact</div>
+    </div>
+  </div>
+  <button class="c-btn c-prev">&#10094;</button>
+  <button class="c-btn c-next">&#10095;</button>
+</div>
+
+<!-- LIGHTBOX -->
+<div id="lb" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:1000;align-items:center;justify-content:center;flex-direction:column;gap:14px;padding:20px;">
+  <button id="lbClose" style="position:fixed;top:18px;right:22px;background:none;border:none;color:#fff;font-size:1.8rem;cursor:pointer;opacity:0.7;">✕</button>
+  <img id="lbImg" src="" alt="" style="max-width:92vw;max-height:80vh;object-fit:contain;border-radius:12px;border:1px solid rgba(0,240,255,0.15);">
+  <p id="lbCaption" style="color:rgba(200,221,245,0.6);font-size:0.85rem;text-align:center;margin:0;font-family:'Syne',sans-serif;"></p>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <button id="lbPrev" class="lb-btn">← Précédent</button>
+    <span id="lbCounter" style="color:rgba(200,221,245,0.4);font-size:0.85rem;min-width:48px;text-align:center;"></span>
+    <button id="lbNext" class="lb-btn">Suivant →</button>
+  </div>
+</div>
+
+<div class="c-dots">
+  <div class="c-dot active"></div>
+  <div class="c-dot"></div>
+  <div class="c-dot"></div>
+  <div class="c-dot"></div>
+  <div class="c-dot"></div>
+  <div class="c-dot"></div>
+  <div class="c-dot"></div>
+</div>
+
+  
+  </div>
+
+  <!-- ══ CONTEXTE ══ -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon">🎯</div>
+      <div class="section-title">Contexte & Introduction</div>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="card">
+      <p style="margin-bottom:16px;">
+        J'ai effectué ce stage de première année en <strong style="color:var(--white)">distanciel</strong>, d'une durée de <strong style="color:var(--white)">6 semaines</strong>, du 19 mai au 27 juin 2025, pour la boulangerie <strong style="color:var(--cyan)">K'scroute</strong> située au 13 Avenue de la Division Leclerc à Cachan.
+      </p>
+      <p>
+        Ma mission principale a été de concevoir un <strong style="color:var(--white)">site web vitrine</strong> présentant les produits de la boulangerie, ainsi qu'une page contact permettant aux collaborateurs, demandeurs d'emploi et clients de prendre contact.
+      </p>
+    </div>
+  </div>
+
+  <!-- ══ OBJECTIFS ══ -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon">🏆</div>
+      <div class="section-title">Objectifs du site</div>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="obj-list">
+      <div class="obj-item">
+        <span class="obj-num">01</span>
+        <span class="obj-text">Créer un site vitrine pour <strong style="color:var(--white)">présenter les produits</strong> de la boulangerie et attirer de nouveaux clients.</span>
+      </div>
+      <div class="obj-item">
+        <span class="obj-num">02</span>
+        <span class="obj-text"><strong style="color:var(--white)">Mettre en avant la boulangerie</strong>, récente par rapport aux autres établissements de la ville.</span>
+      </div>
+      <div class="obj-item">
+        <span class="obj-num">03</span>
+        <span class="obj-text">Mettre en place une <strong style="color:var(--white)">page contact</strong> pour les collaborateurs, les demandeurs d'emploi, ainsi que pour les commandes et prises de contact clients.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TECHNOLOGIES ══ -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon">⚙️</div>
+      <div class="section-title">Technologies utilisées</div>
+      <div class="section-line"></div>
+    </div>
+ <div class="tech-grid"> 
+
+ <div class="tech-card">
+  <i class="devicon-html5-plain colored tech-icon"></i>
+  <div class="tech-name">HTML</div>
+  <div class="tech-role">Structure & contenu</div>
+</div>
+
+<div class="tech-card">
+  <i class="devicon-css3-plain colored tech-icon"></i>
+  <div class="tech-name">CSS</div>
+  <div class="tech-role">Mise en forme</div>
+</div>
+
+<div class="tech-card">
+  <i class="devicon-bootstrap-plain colored tech-icon"></i>
+  <div class="tech-name">Bootstrap</div>
+  <div class="tech-role">Design responsive</div>
+</div>
+
+<div class="tech-card">
+  <i class="devicon-github-original colored tech-icon"></i>
+  <div class="tech-name">GitHub Pages</div>
+  <div class="tech-role">Hébergement & déploiement</div>
+</div>
+
+<div class="tech-card">
+  <i class="devicon-vscode-plain colored tech-icon"></i>
+  <div class="tech-name">VS Code</div>
+  <div class="tech-role">Éditeur de code</div>
+</div>
+ </div>
+  </div>
+
+  <!-- ══ MISSIONS ══ -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon">💼</div>
+      <div class="section-title">Missions réalisées</div>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="missions-list">
+      <div class="mission-item">
+        <span class="mission-arrow">▶</span>
+        <span class="mission-text">Conception et développement du site vitrine de la boulangerie K'scroute</span>
+      </div>
+      <div class="mission-item">
+        <span class="mission-arrow">▶</span>
+        <span class="mission-text">Intégration des pages : Accueil, Produits et Contact</span>
+      </div>
+      <div class="mission-item">
+        <span class="mission-arrow">▶</span>
+        <span class="mission-text">Mise en place d'un formulaire de contact via Formsubmit</span>
+      </div>
+      <div class="mission-item">
+        <span class="mission-arrow">▶</span>
+        <span class="mission-text">Design responsive avec Bootstrap pour une compatibilité mobile</span>
+      </div>
+      <div class="mission-item">
+        <span class="mission-arrow">▶</span>
+        <span class="mission-text">Déploiement et hébergement du site sur GitHub Pages</span>
+      </div>
+      <div class="mission-item">
+        <span class="mission-arrow">▶</span>
+        <span class="mission-text">Gestion du projet en autonomie complète (distanciel)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ DIFFICULTÉS ══ -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon">⚠️</div>
+      <div class="section-title">Difficultés rencontrées</div>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="ps-grid">
+      <div class="ps-box problem">
+        <div class="ps-label">⛔ Problème 1</div>
+        <p><strong style="color:var(--white)">Manque d'inspiration au démarrage</strong> — Travaillant seul en distanciel, il était difficile de savoir par où commencer et quelle direction adopter pour le design.</p>
+      </div>
+      <div class="ps-box solution">
+        <div class="ps-label">✅ Solution</div>
+        <p>Recherches sur Internet pour <strong style="color:var(--white)">s'inspirer d'autres sites</strong> vitrine, étude de references et prise de décision progressive.</p>
+      </div>
+      <div class="ps-box problem">
+        <div class="ps-label">⛔ Problème 2</div>
+        <p><strong style="color:var(--white)">Limite de stockage GitHub</strong> — Le grand nombre d'images présentes sur le site a rapidement dépassé le quota de stockage de GitHub Pages.</p>
+      </div>
+      <div class="ps-box solution">
+        <div class="ps-label">✅ Solution</div>
+        <p>Recherche de <strong style="color:var(--white)">solutions alternatives d'hébergement</strong> des images et optimisation des fichiers pour réduire leur poids.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ COMPÉTENCES ══ -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon">🚀</div>
+      <div class="section-title">Compétences acquises</div>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="skills-grid">
+      <div class="skill-item">
+        <div class="skill-dot"></div>
+        <span class="skill-text">Développement web HTML / CSS</span>
+      </div>
+      <div class="skill-item">
+        <div class="skill-dot"></div>
+        <span class="skill-text">Autonomie & organisation de projet</span>
+      </div>
+      <div class="skill-item">
+        <div class="skill-dot"></div>
+        <span class="skill-text">Résolution de problèmes techniques</span>
+      </div>
+      <div class="skill-item">
+        <div class="skill-dot"></div>
+        <span class="skill-text">Déploiement via GitHub Pages</span>
+      </div>
+      <div class="skill-item">
+        <div class="skill-dot"></div>
+        <span class="skill-text">Intégration de formulaire Formsubmit</span>
+      </div>
+      <div class="skill-item">
+        <div class="skill-dot"></div>
+        <span class="skill-text">Utilisation de l'IA comme outil d'aide</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ CONCLUSION ══ -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon">💡</div>
+      <div class="section-title">Conclusion</div>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="quote">
+      Ce stage m'a permis d'approfondir mes compétences en développement web, de développer mon autonomie, ma capacité à organiser un projet seul, et de découvrir de nouveaux outils comme GitHub Pages et Formsubmit. Une expérience enrichissante qui pose des bases solides pour la suite de mon BTS SIO option SLAM.
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+/* ── PROGRESS BAR ── */
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = h.scrollTop / (h.scrollHeight - h.clientHeight) * 100;
+  document.getElementById('progress').style.width = pct + '%';
+});
+
+/* ── CAROUSEL + LIGHTBOX ── */
+const slides  = document.querySelectorAll('.slide');
+const dots    = document.querySelectorAll('.c-dot');
+const lb      = document.getElementById('lb');
+const lbImg   = document.getElementById('lbImg');
+const lbCaption = document.getElementById('lbCaption');
+const lbCounter = document.getElementById('lbCounter');
+let cur = 0;
+
+function goTo(n) {
+  slides[cur].classList.remove('active');
+  dots[cur]?.classList.remove('active');
+  cur = (n + slides.length) % slides.length;
+  slides[cur].classList.add('active');
+  dots[cur]?.classList.add('active');
+}
+
+document.querySelector('.c-prev').onclick = (e) => { e.stopPropagation(); goTo(cur - 1); };
+document.querySelector('.c-next').onclick = (e) => { e.stopPropagation(); goTo(cur + 1); };
+dots.forEach((d, i) => d.onclick = () => goTo(i));
+
+// Clic sur le carousel → ouvre lightbox
+document.getElementById('mainSlide').onclick = () => {
+  const img = slides[cur].querySelector('img');
+  const cap = slides[cur].querySelector('.slide-caption');
+  lbImg.src = img.src;
+  lbImg.alt = img.alt;
+  lbCaption.textContent = cap.textContent;
+  lbCounter.textContent = (cur + 1) + ' / ' + slides.length;
+  lb.style.display = 'flex';
+};
+
+function lbUpdate() {
+  const img = slides[cur].querySelector('img');
+  const cap = slides[cur].querySelector('.slide-caption');
+  lbImg.src = img.src;
+  lbCaption.textContent = cap.textContent;
+  lbCounter.textContent = (cur + 1) + ' / ' + slides.length;
+}
+
+document.getElementById('lbClose').onclick = () => lb.style.display = 'none';
+document.getElementById('lbPrev').onclick  = () => { goTo(cur - 1); lbUpdate(); };
+document.getElementById('lbNext').onclick  = () => { goTo(cur + 1); lbUpdate(); };
+
+lb.addEventListener('click', (e) => { if (e.target === lb) lb.style.display = 'none'; });
+
+document.addEventListener('keydown', (e) => {
+  if (lb.style.display === 'none') return;
+  if (e.key === 'ArrowLeft')  { goTo(cur - 1); lbUpdate(); }
+  if (e.key === 'ArrowRight') { goTo(cur + 1); lbUpdate(); }
+  if (e.key === 'Escape') lb.style.display = 'none';
+});
+
+
+
+
+/* ── REVEAL ON SCROLL ── */
+const revealEls = document.querySelectorAll('.reveal');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+
+revealEls.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

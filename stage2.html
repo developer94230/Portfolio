@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stage BTS SIO 2A — Adam Nassiri</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css">
+
+<style>
+
+/* ===== GLOBAL ===== */
+:root {
+  --bg:     #050d1a;
+  --bg2:    #071325;
+  --cyan:   #00f0ff;
+  --cyan2:  #4facfe;
+  --gold:   #f7c948;
+  --red:    #ff4d6d;
+  --card:   rgba(255,255,255,0.04);
+  --border: rgba(0,240,255,0.12);
+  --text:   #c8ddf5;
+  --white:  #eaf4ff;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+/* NOISE */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0;
+}
+
+/* BG GLOW */
+.hero-bg {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(0,240,255,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 80%, rgba(79,172,254,0.06) 0%, transparent 60%),
+    var(--bg);
+  z-index: -1;
+}
+
+/* BACK BTN */
+.back-btn {
+  position: fixed; top: 24px; left: 24px; z-index: 100;
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(0,240,255,0.1);
+  border: 1px solid rgba(0,240,255,0.3);
+  color: var(--cyan);
+  padding: 10px 20px; border-radius: 50px;
+  text-decoration: none; font-family: 'Syne', sans-serif;
+  font-weight: 600; font-size: 0.85rem; letter-spacing: 0.05em;
+  backdrop-filter: blur(12px);
+  transition: all 0.3s ease;
+}
+.back-btn:hover {
+  background: rgba(0,240,255,0.2);
+  box-shadow: 0 0 20px rgba(0,240,255,0.25);
+  transform: translateX(-3px);
+}
+
+/* PROGRESS */
+#progress {
+  position: fixed; top: 0; left: 0; height: 3px;
+  background: linear-gradient(90deg, var(--cyan), var(--cyan2));
+  z-index: 200; transition: width 0.1s linear;
+  box-shadow: 0 0 12px rgba(0,240,255,0.6);
+}
+
+/* CONTAINER */
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 100px 24px 80px;
+  position: relative; z-index: 1;
+}
+
+/* HERO */
+.hero {
+  padding: 60px 0 40px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 60px;
+}
+
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(0,240,255,0.08);
+  border: 1px solid rgba(0,240,255,0.2);
+  color: var(--cyan); padding: 5px 14px; border-radius: 50px;
+  font-size: 0.75rem; font-family: 'Syne', sans-serif;
+  font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.hero-tag::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--cyan); box-shadow: 0 0 8px var(--cyan);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.8); }
+}
+
+.hero h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  font-weight: 800; line-height: 1.1;
+  color: var(--white); letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.hero h1 span {
+  background: linear-gradient(135deg, var(--cyan), var(--cyan2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-meta {
+  display: flex; flex-wrap: wrap; gap: 20px;
+  margin: 24px 0 32px;
+  font-size: 0.9rem; color: rgba(200,221,245,0.6);
+}
+.hero-meta span { display: flex; align-items: center; gap: 6px; }
+.hero-meta .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--cyan); opacity: 0.6; }
+
+/* BADGES */
+.badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 13px; border-radius: 50px;
+  font-size: 0.78rem; font-family: 'Syne', sans-serif;
+  font-weight: 700; letter-spacing: 0.04em;
+}
+.badge-tech { background: rgba(0,240,255,0.08); border: 1px solid rgba(0,240,255,0.2); color: var(--cyan); }
+.badge-tool { background: rgba(247,201,72,0.08); border: 1px solid rgba(247,201,72,0.25); color: var(--gold); }
+
+/* SECTION */
+.section { margin-bottom: 56px; }
+
+.section-header {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 24px;
+}
+
+.section-icon {
+  width: 42px; height: 42px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+  background: rgba(0,240,255,0.08);
+  border: 1px solid rgba(0,240,255,0.15);
+  flex-shrink: 0;
+}
+
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.2rem; font-weight: 700;
+  color: var(--white); letter-spacing: -0.01em;
+}
+
+.section-line {
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, rgba(0,240,255,0.2), transparent);
+}
+
+/* CARD */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 32px;
+  backdrop-filter: blur(8px);
+}
+
+/* PROJECT CARDS */
+.projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 640px) { .projects-grid { grid-template-columns: 1fr; } }
+
+.proj-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px; padding: 24px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.proj-card:hover {
+  border-color: rgba(0,240,255,0.3);
+  box-shadow: 0 0 30px rgba(0,240,255,0.08);
+}
+.proj-num {
+  font-size: 0.7rem; font-weight: 800; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--cyan); opacity: 0.6;
+  font-family: 'Syne', sans-serif; margin-bottom: 8px;
+}
+.proj-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem; font-weight: 700;
+  color: var(--white); margin-bottom: 10px; line-height: 1.3;
+}
+.proj-desc { font-size: 0.87rem; color: var(--text); line-height: 1.6; margin-bottom: 14px; }
+.proj-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  padding: 3px 10px; border-radius: 50px;
+  font-size: 0.72rem; font-weight: 700;
+  background: rgba(0,240,255,0.07); border: 1px solid rgba(0,240,255,0.18);
+  color: var(--cyan); font-family: 'Syne', sans-serif;
+}
+
+/* OBJECTIVES */
+.obj-list { display: flex; flex-direction: column; gap: 12px; }
+.obj-item {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 16px 20px;
+  background: rgba(0,240,255,0.03);
+  border: 1px solid rgba(0,240,255,0.08);
+  border-radius: 12px;
+  transition: border-color 0.3s, background 0.3s;
+}
+.obj-item:hover { border-color: rgba(0,240,255,0.2); background: rgba(0,240,255,0.06); }
+.obj-num {
+  font-family: 'Syne', sans-serif; font-size: 0.7rem; font-weight: 800;
+  color: var(--cyan); opacity: 0.5; margin-top: 2px; flex-shrink: 0; letter-spacing: 0.05em;
+}
+.obj-text { font-size: 0.93rem; color: var(--text); }
+
+/* TECH GRID */
+.tech-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+.tech-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border); border-radius: 14px;
+  padding: 20px; text-align: center; transition: all 0.3s ease;
+}
+.tech-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(0,240,255,0.3);
+  box-shadow: 0 8px 30px rgba(0,240,255,0.1);
+}
+.tech-icon { font-size: 1.8rem; margin-bottom: 10px; display: block; }
+.tech-name { font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+.tech-role { font-size: 0.75rem; color: rgba(200,221,245,0.5); }
+
+/* TIMELINE */
+.timeline { position: relative; padding-left: 28px; }
+.timeline::before {
+  content: ''; position: absolute; left: 6px; top: 8px; bottom: 0; width: 1px;
+  background: linear-gradient(180deg, var(--cyan), rgba(0,240,255,0.05));
+}
+.tl-block { position: relative; padding-bottom: 36px; }
+.tl-block:last-child { padding-bottom: 0; }
+.tl-dot {
+  position: absolute; left: -22px; top: 5px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--bg2); border: 2px solid var(--cyan);
+  box-shadow: 0 0 10px rgba(0,240,255,0.5);
+}
+.tl-week {
+  display: inline-block; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--cyan); margin-bottom: 10px;
+  background: rgba(0,240,255,0.07); border: 1px solid rgba(0,240,255,0.15);
+  padding: 3px 12px; border-radius: 50px; font-family: 'Syne', sans-serif;
+}
+.tl-heading {
+  font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700;
+  color: var(--white); margin-bottom: 12px;
+}
+.tl-items { display: flex; flex-direction: column; gap: 8px; }
+.tl-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 8px; font-size: 0.87rem; color: var(--text);
+  transition: background 0.2s, border-color 0.2s;
+}
+.tl-item:hover { background: rgba(0,240,255,0.04); border-color: rgba(0,240,255,0.15); }
+.tl-arrow { color: var(--cyan2); font-size: 0.7rem; margin-top: 3px; flex-shrink: 0; }
+
+/* MVC ARCH */
+.arch {
+  display: grid; grid-template-columns: 1fr auto 1fr auto 1fr;
+  gap: 0; align-items: center; padding: 28px;
+  background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+}
+@media (max-width: 580px) { .arch { grid-template-columns: 1fr; gap: 8px; } .arch-arrow { transform: rotate(90deg); } }
+.arch-box { text-align: center; padding: 20px 12px; border-radius: 12px; border: 1px solid; }
+.arch-box.model { border-color: rgba(0,240,255,0.25); background: rgba(0,240,255,0.06); }
+.arch-box.view  { border-color: rgba(247,201,72,0.25); background: rgba(247,201,72,0.06); }
+.arch-box.ctrl  { border-color: rgba(79,172,254,0.25); background: rgba(79,172,254,0.06); }
+.arch-emoji { font-size: 1.5rem; margin-bottom: 8px; }
+.arch-label { font-family: 'Syne', sans-serif; font-size: 0.8rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+.arch-box.model .arch-label { color: var(--cyan); }
+.arch-box.view  .arch-label { color: var(--gold); }
+.arch-box.ctrl  .arch-label { color: var(--cyan2); }
+.arch-desc { font-size: 0.73rem; color: var(--text); margin-top: 4px; line-height: 1.5; }
+.arch-arrow { text-align: center; color: rgba(0,240,255,0.25); font-size: 1.2rem; padding: 0 10px; }
+
+/* CODE BLOCK */
+.code-block {
+  background: #040c18; border: 1px solid rgba(0,240,255,0.1);
+  border-radius: 14px; overflow: hidden; margin-top: 16px;
+}
+.code-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px; background: rgba(0,240,255,0.03);
+  border-bottom: 1px solid rgba(0,240,255,0.08);
+}
+.code-dots { display: flex; gap: 6px; }
+.code-dot { width: 10px; height: 10px; border-radius: 50%; }
+.cd-r { background: #ff5f57; } .cd-y { background: #febc2e; } .cd-g { background: #28c840; }
+.code-lang { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(0,240,255,0.4); font-family: 'Syne', sans-serif; }
+.code-body { padding: 20px; overflow-x: auto; }
+.code-body pre { font-family: 'Fira Code', 'Courier New', monospace; font-size: 0.78rem; line-height: 1.7; color: #c8ddf5; white-space: pre; }
+.c-kw  { color: #4facfe; } .c-fn  { color: #00f0ff; } .c-str { color: #a8e6b0; }
+.c-cm  { color: #3d5a7a; } .c-var { color: #f7c948; } .c-op  { color: rgba(200,221,245,0.4); }
+
+/* IA FLOW */
+.ia-flow {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+  padding: 20px 0 4px;
+}
+.ia-step { padding: 10px 16px; border-radius: 10px; font-size: 0.82rem; font-weight: 600; font-family: 'Syne', sans-serif; }
+.ia-step.s1 { background: rgba(0,240,255,0.08); border: 1px solid rgba(0,240,255,0.2); color: var(--cyan); }
+.ia-step.s2 { background: rgba(247,201,72,0.08); border: 1px solid rgba(247,201,72,0.2); color: var(--gold); }
+.ia-step.s3 { background: rgba(79,172,254,0.08); border: 1px solid rgba(79,172,254,0.2); color: var(--cyan2); }
+.ia-step.s4 { background: rgba(0,240,255,0.08); border: 1px solid rgba(0,240,255,0.2); color: var(--cyan); }
+.ia-arrow { color: rgba(0,240,255,0.25); font-size: 1.1rem; }
+
+/* PROBLEM / SOLUTION */
+.diff-group { display: flex; flex-direction: column; gap: 20px; }
+.problem-solution { display: flex; gap: 20px; flex-wrap: wrap; }
+.problem, .solution {
+  flex: 1; min-width: 250px; padding: 20px; border-radius: 15px;
+}
+.problem { background: rgba(255,0,0,0.07); border-left: 4px solid var(--red); }
+.solution { background: rgba(0,240,255,0.06); border-left: 4px solid var(--cyan); }
+.solution.pending { background: rgba(247,201,72,0.06); border-left-color: var(--gold); }
+.ps-label {
+  font-family: 'Syne', sans-serif; font-size: 0.72rem; font-weight: 800;
+  letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px;
+}
+.problem .ps-label { color: var(--red); }
+.solution .ps-label { color: var(--cyan); }
+.solution.pending .ps-label { color: var(--gold); }
+
+/* SKILLS */
+.skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+.skill-item {
+  padding: 18px 20px;
+  background: linear-gradient(135deg, rgba(0,240,255,0.05), rgba(79,172,254,0.04));
+  border: 1px solid rgba(0,240,255,0.12); border-radius: 12px;
+  display: flex; align-items: center; gap: 12px; transition: all 0.3s;
+}
+.skill-item:hover { transform: translateY(-3px); box-shadow: 0 6px 24px rgba(0,240,255,0.12); border-color: rgba(0,240,255,0.25); }
+.skill-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 8px rgba(0,240,255,0.6); flex-shrink: 0; }
+.skill-text { font-size: 0.9rem; color: var(--white); font-weight: 500; }
+
+/* CAROUSEL */
+.carousel-wrap {
+  position: relative; border-radius: 16px; overflow: hidden;
+  box-shadow: 0 0 50px rgba(0,240,255,0.1); border: 1px solid var(--border);
+}
+.slides { position: relative; width: 100%; aspect-ratio: 16/9; background: var(--bg2); }
+.slide {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.5s ease;
+}
+.slide img { width: 100%; height: 100%; object-fit: contain; }
+.slide-ph { flex-direction: column; align-items: center; gap: 8px; color: rgba(200,221,245,0.2); display: flex; }
+.slide.active { opacity: 1; }
+.slide-cap {
+  position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
+  background: rgba(5,13,26,0.8); backdrop-filter: blur(8px);
+  border: 1px solid rgba(0,240,255,0.15);
+  padding: 6px 16px; border-radius: 50px;
+  font-size: 0.78rem; color: var(--cyan);
+  font-family: 'Syne', sans-serif; font-weight: 600; white-space: nowrap;
+}
+.c-btn {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 40px; height: 40px; border-radius: 50%;
+  background: rgba(5,13,26,0.7); backdrop-filter: blur(8px);
+  border: 1px solid rgba(0,240,255,0.2);
+  color: var(--cyan); font-size: 1rem;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; z-index: 10; transition: all 0.2s;
+}
+.c-btn:hover { background: rgba(0,240,255,0.15); box-shadow: 0 0 16px rgba(0,240,255,0.3); }
+.c-prev { left: 14px; } .c-next { right: 14px; }
+.c-dots { display: flex; justify-content: center; gap: 8px; padding: 16px 0 4px; }
+.c-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(0,240,255,0.2); cursor: pointer; transition: all 0.3s; }
+.c-dot.active { background: var(--cyan); box-shadow: 0 0 8px rgba(0,240,255,0.5); width: 20px; border-radius: 3px; }
+
+/* QUOTE */
+.quote {
+  border-left: 3px solid var(--cyan); padding: 20px 24px;
+  background: rgba(0,240,255,0.04); border-radius: 0 12px 12px 0;
+  font-size: 1rem; color: rgba(200,221,245,0.8); font-style: italic;
+}
+
+/* REVEAL */
+.reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* DUAL CAROUSEL */
+.dual-carousel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 700px) {
+  .dual-carousel { grid-template-columns: 1fr; }
+}
+
+.dual-label {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--cyan);
+  margin-bottom: 12px;
+  letter-spacing: 0.03em;
+}
+
+.tl-item-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.tl-img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  padding: 8px;
+  margin-top: 4px;
+}
+
+.tech-icon {
+  font-size: 2.2rem;
+  margin-bottom: 10px;
+  display: block;
+  width: 2.2rem;
+  height: 2.2rem;
+  object-fit: contain;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.lb-btn {
+  background: rgba(0,240,255,0.08);
+  border: 1px solid rgba(0,240,255,0.25);
+  color: var(--cyan);
+  padding: 8px 20px;
+  border-radius: 50px;
+  cursor: pointer;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  transition: background 0.2s;
+}
+.lb-btn:hover { background: rgba(0,240,255,0.18); }
+
+#lb {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lb-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+#lbImg {
+  max-width: 90vw;
+  max-height: 80vh;
+  object-fit: contain;
+}
+
+@media (max-width: 768px) {
+  .hero h1 { font-size: 2rem; }
+  .container { padding: 80px 16px 60px; }
+  .tech-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+
+<body>
+<div class="hero-bg"></div>
+<div id="progress"></div>
+
+<a href="index.html" class="back-btn">← Retour</a>
+
+<div class="container">
+
+  <!-- HERO -->
+  <header class="hero reveal">
+    <div class="hero-tag">BTS SIO SLAM · 2ème année</div>
+    <h1>Stage au<br><span>CSC La Plaine</span></h1>
+    <div class="hero-meta">
+      <span>📍 Cachan, Île-de-France</span>
+      <span class="dot"></span>
+      <span>📅 12 Janvier – 20 Février 2026</span>
+      <span class="dot"></span>
+      <span>🏢 Association à but non lucratif</span>
+      <span class="dot"></span>
+      <span>👤 Présentiel · Solo</span>
+    </div>
+    <div class="badges">
+      <span class="badge badge-tech">Laravel</span>
+      <span class="badge badge-tech">PHP</span>
+      <span class="badge badge-tech">MySQL</span>
+      <span class="badge badge-tech">MVC</span>
+      <span class="badge badge-tool">Instagram Graph API</span>
+      <span class="badge badge-tool">Hugging Face</span>
+      <span class="badge badge-tool">Ngrok</span>
+      <span class="badge badge-tool">Meta for Developers</span>
+    </div>
+  </header>
+
+  <!-- ENTREPRISE -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon">🏢</div>
+      <div class="section-title">Présentation de l'entreprise</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="card">
+      <p style="margin-bottom:14px;">
+        J'ai effectué mon stage au <strong style="color:var(--cyan)">Centre Socio-Culturel La Plaine</strong>, association à but non lucratif située au 1, allée Pierre de Montreuil à Cachan. Ce centre est fédéré à l'<strong style="color:var(--white)">AGAESC</strong>, qui possède également trois autres centres dans la ville.
+      </p>
+      <p>
+        Le centre a pour mission de <strong style="color:var(--white)">favoriser le lien social</strong> et propose des activités culturelles, éducatives et de loisirs aux habitants : ateliers, événements, accompagnements, projets collectifs. Il souhaitait améliorer sa présence numérique pour mieux communiquer avec son public.
+      </p>
+    </div>
+  </div>
+
+  <!-- 2 PROJETS -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon">🚀</div>
+      <div class="section-title">Les deux projets réalisés</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="projects-grid">
+      <div class="proj-card">
+        <div class="proj-num">Projet 01 · Laravel</div>
+        <div class="proj-name">Site web vitrine du centre</div>
+        <p class="proj-desc">Conception et développement complet d'un site web interactif présentant les activités, actualités, avec portail administrateur sécurisé et formulaire d'adhésion.</p>
+        <div class="proj-chips">
+          <span class="chip">Laravel</span>
+          <span class="chip">PHP</span>
+          <span class="chip">MySQL</span>
+          <span class="chip">HTML/CSS</span>
+          <span class="chip">GLightbox</span>
+          <span class="chip">FormSubmit</span>
+        </div>
+      </div>
+      <div class="proj-card">
+        <div class="proj-num">Projet 02 · IA & API</div>
+        <div class="proj-name">Automatisation Instagram par IA</div>
+        <p class="proj-desc">Script PHP qui détecte les photos locales, génère automatiquement des légendes via Hugging Face (Flan-T5), puis publie sur Instagram via l'API Graph de Meta.</p>
+        <div class="proj-chips">
+          <span class="chip">PHP</span>
+          <span class="chip">Graph API</span>
+          <span class="chip">Hugging Face</span>
+          <span class="chip">Ngrok</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CAROUSEL -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon">🖼️</div>
+      <div class="section-title">Aperçu du site réalisé</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="carousel-wrap" id="mainSlide" style="cursor:zoom-in;">
+      <div class="slides">
+        <div class="slide active">
+          <img src="page d'accueil 1.png" alt="Accueil" onerror="this.style.display='none'">      
+          <div class="slide-cap">Page d'accueil 1</div>
+        </div>
+        <div class="slide">
+          <img src="page d'accueil 2.png" alt="Accueil" onerror="this.style.display='none'">      
+          <div class="slide-cap">Page d'accueil 2</div>
+        </div>
+        <div class="slide">
+          <img src="page d'accueil 3.png" alt="Accueil" onerror="this.style.display='none'">      
+          <div class="slide-cap">Page d'accueil 3</div>
+        </div>
+        <div class="slide">
+          <img src="page d'accueil 4.png" alt="Accueil" onerror="this.style.display='none'">      
+          <div class="slide-cap">Page d'accueil 4</div>
+        </div>
+        <div class="slide">
+          <img src="page actualités 1.png" alt="Actualités" onerror="this.style.display='none'">
+       
+          <div class="slide-cap">Page actualités 1</div>
+        </div>
+        <div class="slide">
+          <img src="page actualités 2.png" alt="Actualités" onerror="this.style.display='none'">
+       
+          <div class="slide-cap">Page actualités 2</div>
+        </div>
+        <div class="slide">
+          <img src="page actualités 3.png" alt="Actualités" onerror="this.style.display='none'">
+       
+          <div class="slide-cap">Page actualités 3</div>
+        </div>
+        <div class="slide">
+          <img src="page show actualités 1.png" alt="Actualités" onerror="this.style.display='none'">
+       
+          <div class="slide-cap">Page show actualités 1</div>
+        </div>
+        <div class="slide">
+          <img src="page show actualités 2.png" alt="Actualités" onerror="this.style.display='none'">
+       
+          <div class="slide-cap">Page show actualités 2</div>
+        </div>
+
+        <div class="slide">
+          <img src="pages activités 1.png" alt="Activités" onerror="this.style.display='none'">
+
+          <div class="slide-cap">Page activités 1</div>
+        </div>
+        <div class="slide">
+          <img src="pages activités 2.png" alt="Activités" onerror="this.style.display='none'">
+
+          <div class="slide-cap">Page activités 2</div>
+        </div>
+        <div class="slide">
+          <img src="page show activité.png" alt="Activités" onerror="this.style.display='none'">
+
+          <div class="slide-cap">Page show activités</div>
+        </div>
+        <div class="slide">
+          <img src="page adhésion 1.png" alt="Adhésion" onerror="this.style.display='none'">
+
+          <div class="slide-cap">Page adhésion 1</div>
+        </div>
+        <div class="slide">
+          <img src="page adhésion 2.png" alt="Adhésion" onerror="this.style.display='none'">
+
+          <div class="slide-cap">Page adhésion 2</div>
+        </div>
+        <div class="slide">
+          <img src="page adhésion 3.png" alt="Adhésion" onerror="this.style.display='none'">
+
+          <div class="slide-cap">Page adhésion 3</div>
+        </div>
+        <div class="slide">
+          <img src="page adhésion 4.png" alt="Adhésion" onerror="this.style.display='none'">
+
+          <div class="slide-cap">Page adhésion 4</div>
+        </div>
+        <div class="slide">
+          <img src="page adhésion 5.png" alt="Adhésion" onerror="this.style.display='none'">
+
+          <div class="slide-cap">Page adhésion 5</div>
+        </div>
+        <div class="slide">
+          <img src="page contact 1.png" alt="Contact" onerror="this.style.display='none'">
+
+          <div class="slide-cap">Page contact 1</div>
+        </div>
+        <div class="slide">
+          <img src="page contact 2.png" alt="Contact" onerror="this.style.display='none'">
+
+          <div class="slide-cap">Page contact 2</div>
+        </div>
+        <div class="slide">
+          <img src="page p 1.png" alt="Dashboard" onerror="this.style.display='none'">
+          <div class="slide-cap">Page Qui sommes nous ?</div>
+        </div>
+        <div class="slide">
+          <img src="page p 2.png" alt="Dashboard" onerror="this.style.display='none'">
+          <div class="slide-cap">Page Qui sommes nous ?(2)</div>
+        </div>
+        <div class="slide">
+          <img src="page p 3.png" alt="Dashboard" onerror="this.style.display='none'">
+          <div class="slide-cap">Page Qui sommes nous ?(3)</div>
+        </div>
+        <div class="slide">
+          <img src="page p 4.png" alt="Dashboard" onerror="this.style.display='none'">
+          <div class="slide-cap">Page Qui sommes nous ?(4)</div>
+        </div>
+        <div class="slide">
+          <img src="page p 5.png" alt="Dashboard" onerror="this.style.display='none'">
+          <div class="slide-cap">Page Qui sommes nous ?(5)</div>
+        </div>
+      </div>
+      <button class="c-btn c-prev">&#10094;</button>
+      <button class="c-btn c-next">&#10095;</button>
+    </div>
+    <!-- LIGHTBOX -->
+<div id="lb" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:1000;align-items:center;justify-content:center;flex-direction:column;gap:14px;padding:20px;">
+  <button id="lbClose" style="position:fixed;top:18px;right:22px;background:none;border:none;color:#fff;font-size:1.8rem;cursor:pointer;opacity:0.7;">✕</button>
+  <img id="lbImg" src="" alt="" style="max-width:92vw;max-height:80vh;object-fit:contain;border-radius:12px;border:1px solid rgba(0,240,255,0.15);">
+  <p id="lbCaption" style="color:rgba(200,221,245,0.6);font-size:0.85rem;text-align:center;margin:0;font-family:'Syne',sans-serif;"></p>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <button id="lbPrev" class="lb-btn">← Précédent</button>
+    <span id="lbCounter" style="color:rgba(200,221,245,0.4);font-size:0.85rem;min-width:48px;text-align:center;"></span>
+    <button id="lbNext" class="lb-btn">Suivant →</button>
+  </div>
+</div>
+    <div class="c-dots">
+      <div class="c-dot active"></div><div class="c-dot"></div>
+      <div class="c-dot"></div><div class="c-dot"></div>
+      <div class="c-dot"></div><div class="c-dot"></div>
+      <div class="c-dot"></div><div class="c-dot"></div>
+      <div class="c-dot"></div><div class="c-dot"></div>
+      <div class="c-dot"></div><div class="c-dot"></div>
+      <div class="c-dot"></div><div class="c-dot"></div>
+      <div class="c-dot"></div><div class="c-dot"></div>
+      <div class="c-dot"></div><div class="c-dot"></div>
+      <div class="c-dot"></div><div class="c-dot"></div>
+      <div class="c-dot"></div><div class="c-dot"></div>
+      <div class="c-dot"></div><div class="c-dot"></div>
+    </div>
+  <div class="section reveal">
+  <div class="section-header">
+    <div class="section-icon">🔍</div>
+    <div class="section-title">Zoom sur les fonctionnalités</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="dual-carousel">
+
+    <div class="dual-block">
+      <div class="dual-label">🔐 Portail administrateur</div>
+      <div class="carousel-wrap" id="carousel-admin">
+        <div class="slides">
+          <div class="slide active">
+            <img src="page de connexion.png" alt="Dashboard">
+            <div class="slide-cap">Page de connexion</div>
+          </div>
+          <div class="slide">
+            <img src="dashboard.png" alt="Connexion">
+            <div class="slide-cap">Dashboard</div>
+          </div>
+          <div class="slide">
+            <img src="pages activités 2.png" alt="Ajout actualité">
+            <div class="slide-cap">CRUD</div>
+          </div>
+          <div class="slide">
+            <img src="bouton déconnexion.png" alt="Ajout actualité">
+            <div class="slide-cap">Bouton déconnexion</div>
+          </div>
+        </div>
+        <button class="c-btn c-prev">&#10094;</button>
+        <button class="c-btn c-next">&#10095;</button>
+      </div>
+      <div class="c-dots" id="dots-admin">
+        <div class="c-dot active"></div>
+        <div class="c-dot"></div>
+        <div class="c-dot"></div>
+      </div>
+    </div>
+
+    <div class="dual-block">
+      <div class="dual-label">🤖 Projet IA Instagram</div>
+      <div class="carousel-wrap" id="carousel-ia">
+        <div class="slides">
+          <div class="slide active">
+            <img src="Capture d’écran app facebook.png" alt="Script IA">
+            <div class="slide-cap">Application Meta</div>
+          </div>
+          <div class="slide">
+            <img src="Capture d'écran roles comptes.png" alt="Meta app">
+            <div class="slide-cap">Role compte</div>
+          </div>
+          <div class="slide">
+            <img src="Capture d'écran token accès utilisateur.png" alt="Meta app">
+            <div class="slide-cap">Tokens utilisateur</div>
+          </div>
+          <div class="slide">
+            <img src="Capture d'écran permissions.png" alt="Meta app">
+            <div class="slide-cap">Permissions tokens</div>
+          </div>
+          <div class="slide">
+            <img src="Capture d'écran app live.png" alt="Meta app">
+            <div class="slide-cap">Application mode Live</div>
+          </div>
+        </div>
+        <button class="c-btn c-prev">&#10094;</button>
+        <button class="c-btn c-next">&#10095;</button>
+      </div>
+      <div class="c-dots" id="dots-ia">
+        <div class="c-dot active"></div>
+        <div class="c-dot"></div>
+        <div class="c-dot"></div>
+        <div class="c-dot"></div>
+        <div class="c-dot"></div>
+      </div>
+    </div>
+
+  </div>
+  </div>
+
+  <!-- OBJECTIFS -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon">🎯</div>
+      <div class="section-title">Objectifs du stage</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="obj-list">
+      <div class="obj-item">
+        <span class="obj-num">01</span>
+        <span class="obj-text">Développer un <strong style="color:var(--white)">site web vitrine</strong> pour améliorer la communication du centre auprès des habitants et présenter ses activités.</span>
+      </div>
+      <div class="obj-item">
+        <span class="obj-num">02</span>
+        <span class="obj-text">Concevoir un <strong style="color:var(--white)">système d'automatisation IA</strong> pour simplifier la publication de contenus sur Instagram via l'Instagram Graph API.</span>
+      </div>
+      <div class="obj-item">
+        <span class="obj-num">03</span>
+        <span class="obj-text">Renforcer mes compétences techniques : <strong style="color:var(--white)">framework Laravel</strong>, architecture MVC, utilisation d'API et intégration d'intelligence artificielle.</span>
+      </div>
+      <div class="obj-item">
+        <span class="obj-num">04</span>
+        <span class="obj-text">Développer des compétences professionnelles : <strong style="color:var(--white)">autonomie, organisation et gestion de projet</strong> dans un contexte réel.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ARCHITECTURE MVC -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon">🏗️</div>
+      <div class="section-title">Architecture Laravel — MVC</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="arch">
+      <div class="arch-box model">
+        <div class="arch-emoji">🗄️</div>
+        <div class="arch-label">Modèle</div>
+        <div class="arch-desc">Données MySQL<br>Activités, Actualités,<br>Adhérents</div>
+      </div>
+      <div class="arch-arrow">⟷</div>
+      <div class="arch-box ctrl">
+        <div class="arch-emoji">⚙️</div>
+        <div class="arch-label">Contrôleur</div>
+        <div class="arch-desc">CRUD, Routes,<br>Auth, Form Requests,<br>@auth / @guest</div>
+      </div>
+      <div class="arch-arrow">⟷</div>
+      <div class="arch-box view">
+        <div class="arch-emoji">🖥️</div>
+        <div class="arch-label">Vue</div>
+        <div class="arch-desc">Blade, HTML/CSS<br>Interface responsive<br>GLightbox</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TECHNOLOGIES -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon">⚙️</div>
+      <div class="section-title">Technologies utilisées</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="tech-grid">
+  <div class="tech-card">
+    <i class="devicon-laravel-plain colored tech-icon"></i>
+    <div class="tech-name">Laravel</div>
+    <div class="tech-role">Framework PHP MVC</div>
+  </div>
+  <div class="tech-card">
+    <i class="devicon-mysql-plain colored tech-icon"></i>
+    <div class="tech-name">MySQL</div>
+    <div class="tech-role">Base de données</div>
+  </div>
+  <div class="tech-card">
+    <i class="devicon-html5-plain colored tech-icon"></i>
+    <div class="tech-name">HTML / CSS</div>
+    <div class="tech-role">Interface utilisateur</div>
+  </div>
+  <div class="tech-card">
+    <img src="logo insta.jpg" alt="Instagram" class="tech-icon">
+    <div class="tech-name">Instagram Graph API</div>
+    <div class="tech-role">Publication Instagram</div>
+  </div>
+  <div class="tech-card">
+    <img src="logo hugging face.png" alt="Hugging Face" class="tech-icon">
+    <div class="tech-name">Hugging Face</div>
+    <div class="tech-role">Génération IA de légendes</div>
+  </div>
+  <div class="tech-card">
+    <img src="logo ngrok.png" alt="Ngrok" class="tech-icon">
+    <div class="tech-name">Ngrok</div>
+    <div class="tech-role">Tunnel URL publique</div>
+  </div>
+  <div class="tech-card">
+    <i class="devicon-vscode-plain colored tech-icon"></i>
+    <div class="tech-name">VS Code</div>
+    <div class="tech-role">Éditeur de code</div>
+  </div>
+</div>
+  </div>
+
+  <!-- TIMELINE -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon">💼</div>
+      <div class="section-title">Réalisation — Semaine par semaine</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="timeline">
+      <div class="tl-block">
+        <div class="tl-dot"></div>
+        <div class="tl-week">Semaines 1 – 3</div>
+        <div class="tl-heading">Mise en place initiale du site Laravel</div>
+        <div class="tl-items">
+          <div class="tl-item"><span class="tl-arrow">▸</span>Création de la base de données MySQL et des tables (activités, actualités, adhérents)</div>
+          <div class="tl-item"><span class="tl-arrow">▸</span>Développement des pages Accueil et « Qui sommes-nous ? » avec navbar dynamique et hero responsive</div>
+          <div class="tl-item"><span class="tl-arrow">▸</span>Intégration de GLightbox pour la navigation d'images en galerie interactive</div>
+          <div class="tl-item"><span class="tl-arrow">▸</span>Mise en place du footer avec icônes réseaux sociaux (Facebook, Instagram, YouTube)</div>
+        </div>
+      </div>
+      <div class="tl-block">
+        <div class="tl-dot"></div>
+        <div class="tl-week">Semaines 4 – 5</div>
+        <div class="tl-heading">Fonctions avancées & portail administrateur</div>
+        <div class="tl-items">
+          <div class="tl-item">
+  <span class="tl-arrow">▸</span>
+  <div class="tl-item-content">
+    <span>Création des contrôleurs : <code>AdherentController</code>, <code>ActiviteController</code></span>
+    <img src="controlleurs.png" alt="Contrôleurs" class="tl-img">
+  </div>
+</div>
+          <div class="tl-item"><span class="tl-arrow">▸</span>Mise en œuvre des méthodes CRUD complètes : index, create, store, edit, update, show, destroy</div>
+          <div class="tl-item"><span class="tl-arrow">▸</span>Développement du portail administrateur (ajouter, modifier, supprimer activités et actualités)</div>
+         <div class="tl-item">
+  <span class="tl-arrow">▸</span>
+  <div class="tl-item-content">
+    <span>Sécurisation des accès avec <code style="color:var(--cyan);font-size:0.82rem">@auth</code> / <code style="color:var(--cyan);font-size:0.82rem">@guest</code> dans les templates Blade</span>
+    <img src="sécurisation.png" alt="Sécurisation Blade" class="tl-img">
+  </div>
+</div>
+          <div class="tl-item"><span class="tl-arrow">▸</span>Page Contact avec formulaire fonctionnel et intégration Google Maps</div>
+          <div class="tl-item"><span class="tl-arrow">▸</span>Page Adhésion avec formulaire, enregistrement BDD et préparation paiement sur place</div>
+        </div>
+      </div>
+      <div class="tl-block">
+        <div class="tl-dot"></div>
+        <div class="tl-week">Semaine 6</div>
+        <div class="tl-heading">Finalisation & esthétique</div>
+        <div class="tl-items">
+          <div class="tl-item"><span class="tl-arrow">▸</span>Refonte du dashboard administrateur (boutons Gérer activités / Gérer actualités)</div>
+          <div class="tl-item"><span class="tl-arrow">▸</span>Ajout du bouton de déconnexion via la fonction logout de Laravel</div>
+          <div class="tl-item"><span class="tl-arrow">▸</span>Finalisation des pages publiques et validation du site complet</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROJET IA -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon">🤖</div>
+      <div class="section-title">Projet IA — Automatisation Instagram</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="card">
+      <p style="font-size:0.93rem;margin-bottom:4px;">
+        Le script PHP surveille un dossier local, génère automatiquement une <strong style="color:var(--white)">légende via Hugging Face (Flan-T5)</strong> pour chaque photo détectée, puis la publie sur Instagram via l'<strong style="color:var(--white)">Instagram Graph API</strong>. Ngrok crée une URL publique temporaire pour rendre les images accessibles.
+      </p>
+      <div class="ia-flow">
+        <div class="ia-step s1">📁 Dossier local</div>
+        <div class="ia-arrow">→</div>
+        <div class="ia-step s2">🤖 Légende IA</div>
+        <div class="ia-arrow">→</div>
+        <div class="ia-step s3">🌐 Ngrok URL</div>
+        <div class="ia-arrow">→</div>
+        <div class="ia-step s4">📸 Publication Instagram</div>
+      </div>
+    </div>
+
+   <div class="code-block">
+  <div class="code-header">
+    <div class="code-dots">
+      <div class="code-dot cd-r"></div>
+      <div class="code-dot cd-y"></div>
+      <div class="code-dot cd-g"></div>
+    </div>
+    <div class="code-lang">PHP — Simulation publication Instagram</div>
+  </div>
+  <div class="code-body"><pre><span class="c-cm">&lt;?php</span>
+// Clé Hugging Face
+<span class="c-var">$apiKey</span> <span class="c-op">=</span> <span class="c-str">"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"</span>;
+
+// Fonction pour générer une légende
+<span class="c-kw">function</span> <span class="c-fn">generer_legende</span>(<span class="c-var">$message</span>, <span class="c-var">$apiKey</span>) {
+    <span class="c-var">$data</span> <span class="c-op">=</span> [<span class="c-str">"inputs"</span> <span class="c-op">=></span> <span class="c-var">$message</span>];
+    <span class="c-var">$ch</span> <span class="c-op">=</span> <span class="c-fn">curl_init</span>(<span class="c-str">"https://router.huggingface.co/models/google/flan-t5-small"</span>);
+    <span class="c-fn">curl_setopt</span>(<span class="c-var">$ch</span>, CURLOPT_HTTPHEADER, [
+        <span class="c-str">"Authorization: Bearer </span><span class="c-var">$apiKey</span><span class="c-str">"</span>,
+        <span class="c-str">"Content-Type: application/json"</span>
+    ]);
+    <span class="c-fn">curl_setopt</span>(<span class="c-var">$ch</span>, CURLOPT_POST, <span class="c-kw">true</span>);
+    <span class="c-fn">curl_setopt</span>(<span class="c-var">$ch</span>, CURLOPT_POSTFIELDS, <span class="c-fn">json_encode</span>(<span class="c-var">$data</span>));
+    <span class="c-fn">curl_setopt</span>(<span class="c-var">$ch</span>, CURLOPT_RETURNTRANSFER, <span class="c-kw">true</span>);
+    <span class="c-var">$result</span> <span class="c-op">=</span> <span class="c-fn">json_decode</span>(<span class="c-fn">curl_exec</span>(<span class="c-var">$ch</span>), <span class="c-kw">true</span>);
+    <span class="c-fn">curl_close</span>(<span class="c-var">$ch</span>);
+
+    <span class="c-kw">return</span> <span class="c-var">$result</span>[0][<span class="c-str">"generated_text"</span>] <span class="c-op">??</span> <span class="c-str">"Photo du centre"</span>;
+}
+
+// Exemple : traiter une image
+<span class="c-var">$image</span> <span class="c-op">=</span> <span class="c-str">"exemple.jpg"</span>;
+<span class="c-var">$legende</span> <span class="c-op">=</span> <span class="c-fn">generer_legende</span>(<span class="c-str">"Écris une légende pour cette photo : exemple.jpg"</span>, <span class="c-var">$apiKey</span>);
+
+// Simulation de publication Instagram
+<span class="c-fn">file_put_contents</span>(<span class="c-str">"simulation_exemple.txt"</span>, <span class="c-str">"Image : exemple.jpg\nLégende : "</span> . <span class="c-var">$legende</span>);
+</pre></div>
+</div>
+  </div>
+
+  <!-- DIFFICULTÉS -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon">⚠️</div>
+      <div class="section-title">Difficultés rencontrées</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="diff-group">
+      <div class="problem-solution">
+        <div class="problem">
+          <div class="ps-label">⛔ Hébergement Laravel</div>
+          <p><strong style="color:var(--white)">GitHub Pages incompatible</strong> — Le site Laravel utilise PHP et MySQL, non supportés par GitHub Pages. Railway a également échoué lors du déploiement.</p>
+        </div>
+        <div class="solution">
+          <div class="ps-label">✅ Solution envisagée</div>
+          <p>Utiliser un hébergement web compatible PHP/Laravel (ex. o2switch, PlanetHoster) pour déployer le site complet avec base de données.</p>
+        </div>
+      </div>
+      <div class="problem-solution">
+        <div class="problem">
+          <div class="ps-label">⛔ URL locale refusée</div>
+          <p><strong style="color:var(--white)">Instagram Graph API</strong> exige des images accessibles via une URL HTTPS publique. Le serveur local <code style="font-size:0.85rem;color:var(--cyan)">localhost</code> est refusé.</p>
+        </div>
+        <div class="solution">
+          <div class="ps-label">✅ Solution</div>
+          <p>Utilisation de <strong style="color:var(--white)">Ngrok</strong> pour créer un tunnel HTTPS temporaire vers le dossier local, rendant les images accessibles à l'API.</p>
+        </div>
+      </div>
+      <div class="problem-solution">
+        <div class="problem">
+          <div class="ps-label">⛔ Vérification Meta refusée</div>
+          <p>La <strong style="color:var(--white)">vérification d'entreprise Meta</strong> est obligatoire pour le mode live. Le document soumis pour le CSC La Plaine a été refusé lors du contrôle.</p>
+        </div>
+        <div class="solution pending">
+          <div class="ps-label">⏳ En cours</div>
+          <p>Une nouvelle soumission de documents officiels est prévue pour finaliser la vérification et activer complètement la publication automatique.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPÉTENCES -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon">🚀</div>
+      <div class="section-title">Compétences acquises</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-item"><div class="skill-dot"></div><span class="skill-text">Framework Laravel — architecture MVC</span></div>
+      <div class="skill-item"><div class="skill-dot"></div><span class="skill-text">Conception et gestion BDD MySQL</span></div>
+      <div class="skill-item"><div class="skill-dot"></div><span class="skill-text">Authentification & sécurisation Laravel</span></div>
+      <div class="skill-item"><div class="skill-dot"></div><span class="skill-text">Consommation d'API web (Instagram, Hugging Face)</span></div>
+      <div class="skill-item"><div class="skill-dot"></div><span class="skill-text">Intégration d'un modèle IA (Flan-T5)</span></div>
+      <div class="skill-item"><div class="skill-dot"></div><span class="skill-text">Développement responsive HTML/CSS</span></div>
+      <div class="skill-item"><div class="skill-dot"></div><span class="skill-text">Gestion de tokens d'accès OAuth (Meta)</span></div>
+      <div class="skill-item"><div class="skill-dot"></div><span class="skill-text">Autonomie et gestion de projet</span></div>
+    </div>
+  </div>
+
+  <!-- CONCLUSION -->
+  <div class="section reveal">
+    <div class="section-header">
+      <div class="section-icon">💡</div>
+      <div class="section-title">Conclusion</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="quote">
+      Ce stage au CSC La Plaine a été une expérience très enrichissante, tant sur le plan professionnel que personnel. J'ai pu mettre en pratique mes compétences en développement web avec Laravel tout en découvrant de nouvelles technologies — APIs et intelligence artificielle. L'équipe, accueillante et bienveillante, m'a accompagné tout en me laissant une réelle autonomie. Le site améliore la communication du centre et l'automatisation Instagram simplifie la gestion des réseaux sociaux. Cette expérience a renforcé mon intérêt pour le développement web et ma compréhension du monde professionnel.
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ===== PROGRESS BAR ===== */
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  document.getElementById('progress').style.width =
+    (h.scrollTop / (h.scrollHeight - h.clientHeight) * 100) + '%';
+});
+
+
+/* ===== LIGHTBOX (GLOBAL) ===== */
+const lb = document.getElementById('lb');
+const lbImg = document.getElementById('lbImg');
+const lbCaption = document.getElementById('lbCaption');
+const lbCounter = document.getElementById('lbCounter');
+
+document.getElementById('lbClose').onclick = () => lb.style.display = 'none';
+
+lb.addEventListener('click', (e) => {
+  if (e.target === lb) lb.style.display = 'none';
+});
+
+document.addEventListener('keydown', (e) => {
+  if (lb.style.display === 'none') return;
+  if (e.key === 'Escape') lb.style.display = 'none';
+});
+
+
+/* ===== LIGHTBOX MULTI-CAROUSEL ===== */
+let currentSlides = [];
+let currentIndex = 0;
+
+function attachLightbox(carouselId) {
+  const wrap = document.getElementById(carouselId);
+  if (!wrap) return;
+
+  const slides = wrap.querySelectorAll('.slide');
+
+  function getActiveIndex() {
+    return [...slides].findIndex(s => s.classList.contains('active'));
+  }
+
+  wrap.onclick = () => {
+    currentSlides = slides; // 🔥 on stocke LE BON carousel
+    currentIndex = getActiveIndex();
+
+    updateLightbox();
+    lb.style.display = 'flex';
+  };
+}
+
+
+/* ===== UPDATE LIGHTBOX ===== */
+function updateLightbox() {
+  const slide = currentSlides[currentIndex];
+  const img = slide.querySelector('img');
+  const cap = slide.querySelector('.slide-cap');
+
+  lbImg.src = img.src;
+  lbImg.alt = img.alt;
+  lbCaption.textContent = cap.textContent;
+  lbCounter.textContent = (currentIndex + 1) + ' / ' + currentSlides.length;
+}
+
+
+/* ===== NAVIGATION LIGHTBOX ===== */
+document.getElementById('lbPrev').onclick = () => {
+  if (!currentSlides.length) return;
+  currentIndex = (currentIndex - 1 + currentSlides.length) % currentSlides.length;
+  updateLightbox();
+};
+
+document.getElementById('lbNext').onclick = () => {
+  if (!currentSlides.length) return;
+  currentIndex = (currentIndex + 1) % currentSlides.length;
+  updateLightbox();
+};
+
+/* ===== CAROUSEL (SLIDER) ===== */
+function initCarousel(wrapId, dotsId) {
+  const wrap = document.getElementById(wrapId);
+  const dotsEl = document.getElementById(dotsId);
+  if (!wrap) return;
+
+  const slides = wrap.querySelectorAll('.slide');
+  const dots = dotsEl ? dotsEl.querySelectorAll('.c-dot') : [];
+  let cur = 0;
+
+  function goTo(n) {
+    slides[cur].classList.remove('active');
+    if (dots[cur]) dots[cur].classList.remove('active');
+
+    cur = (n + slides.length) % slides.length;
+
+    slides[cur].classList.add('active');
+    if (dots[cur]) dots[cur].classList.add('active');
+  }
+
+  wrap.querySelector('.c-prev').onclick = (e) => {
+    e.stopPropagation();
+    goTo(cur - 1);
+  };
+
+  wrap.querySelector('.c-next').onclick = (e) => {
+    e.stopPropagation();
+    goTo(cur + 1);
+  };
+
+  dots.forEach((d, i) => d.onclick = () => goTo(i));
+
+  
+}
+
+
+/* ===== REVEAL ANIMATION ===== */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('visible');
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -60px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+
+/* ===== INIT ===== */
+
+// Carousels
+initCarousel('mainSlide');
+initCarousel('carousel-admin', 'dots-admin');
+initCarousel('carousel-ia', 'dots-ia');
+
+// Lightbox sur tous
+attachLightbox('mainSlide');
+attachLightbox('carousel-admin');
+attachLightbox('carousel-ia');
+
+</script>
+</body>
+</html>
+
+
